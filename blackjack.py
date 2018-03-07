@@ -6,10 +6,10 @@ deck = ["2", "3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "A
 "3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace", "2", "3", "4",
 "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace"]
 
-#Matches each card with its numerical value in blackjack
+# Matches each card with its numerical value in blackjack
 card_value = {"2" : 2, "3" : 3, "4" : 4, "5" : 5, "6" : 6, "7" : 7, "8" : 8, "9" : 9, "10" : 10, "Jack" : 10, "Queen" : 10, "King" : 10, "Ace" : 11}
 
-#shuffles the deck, deals two cards and tells the user their cards
+# Shuffles the deck, deals two cards and tells the user their cards
 #and the total.
 def deal():
 	random.shuffle(deck)
@@ -23,6 +23,7 @@ def deal():
 	print(f"Your total is {total}")
 	dealer_draw()
 
+# The dealer draws two cards and prints the first one.
 def dealer_draw():
 	global dealer_card_1
 	global dealer_card_2
@@ -34,7 +35,7 @@ def dealer_draw():
 	print(f"The dealer has {dealer_card_1}")
 	hit_or_stand()	
 
-#lets user either hit, and receive another card, or stand
+# Lets user either hit, and receive another card, or stand.
 def hit_or_stand():
 	print("Would you like to hit or stand?")
 	choice = input("> ")
@@ -46,6 +47,7 @@ def hit_or_stand():
 		print(f"Your new card is {card_3}")
 		if total > 21:
 			print(f"Your total is {total}.\nYou busted")
+			end()
 		else:
 			print(f"Your total is {total}")
 			hit_or_stand()
@@ -75,16 +77,39 @@ def dealer_choice():
 	else:
 		winner()
 
-#determines who the winner is
+# Determines who the winner is
 def winner():
 	global dealer_total
 	global total
 
 	if dealer_total > 21:
 		print(f"The dealer's total is {dealer_total}\nThe dealer busted.\nYou win!")
+		end()
 	elif dealer_total > total:
 		print(f"The dealer's total is {dealer_total}\nYour total is {total}\nThe dealer wins.")
+		end()
 	else:
-		print(f"The dealer's total is {dealer_total}\nYour total is {total}\nYou win!")				
+		print(f"The dealer's total is {dealer_total}\nYour total is {total}\nYou win!")	
+		end()		
+
+def end():
+	choice = input("Would you like to quit or play a new game?\n> ")
+
+	if choice == "quit" or choice == "q":
+		print("Goodbye.")
+		exit(0)
+	elif choice == "new game" or choice == "play again":
+		deck = ["2", "3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace",
+		"2", "3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace", "2", 
+		"3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace", "2", "3", "4",
+		"5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace"]
+
+		deal()
+	else:
+		print("Please type quit or new game.")
+		end()	
+
+			
+
 
 deal()
