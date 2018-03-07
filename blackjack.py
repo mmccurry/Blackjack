@@ -57,7 +57,7 @@ def hit_or_stand():
 		print("You have to type hit or stand.")
 		hit_or_stand()			
 
-#prints the dealers cards
+# Prints the dealers cards
 def dealer_cards():
 	global dealer_card_1
 	global dealer_card_2
@@ -92,6 +92,7 @@ def winner():
 		print(f"The dealer's total is {dealer_total}\nYour total is {total}\nYou win!")	
 		end()		
 
+# Let's the user quit or start a new game.
 def end():
 	choice = input("Would you like to quit or play a new game?\n> ")
 
@@ -108,8 +109,5 @@ def end():
 	else:
 		print("Please type quit or new game.")
 		end()	
-
-			
-
 
 deal()
