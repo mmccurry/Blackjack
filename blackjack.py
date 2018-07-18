@@ -1,113 +1,132 @@
 import random
 
-# Lists every card in a deck. Ignores suit because they aren't relevant to blackjack.
-deck = ["2", "3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace",
-"2", "3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace", "2", 
-"3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace", "2", "3", "4",
-"5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace"]
+class Deck():
 
-# Matches each card with its numerical value in blackjack
-card_value = {"2" : 2, "3" : 3, "4" : 4, "5" : 5, "6" : 6, "7" : 7, "8" : 8, "9" : 9, "10" : 10, "Jack" : 10, "Queen" : 10, "King" : 10, "Ace" : 11}
+	def __init__(self):
+		self.ordered_deck = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace",
+		"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace",
+		"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace",
+		"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]	
 
-# Shuffles the deck, deals two cards and tells the user their cards
-#and the total.
-def deal():
-	random.shuffle(deck)
+		self.card_value = {"2" : 2, "3" : 3, "4" : 4, "5" : 5, "6" : 6, "7" : 7, "8" : 8, "9" : 9, 
+		"10" : 10, "Jack" : 10, "Queen" : 10, "King" : 10, "Ace" : 11}
 
-	card_1 = deck.pop()
-	card_2 = deck.pop()
-	global total
-	total = card_value[card_1] + card_value[card_2]
-		
-	print(f"Your cards are {card_1} and {card_2}")
-	print(f"Your total is {total}")
-	dealer_draw()
+		self.current_deck = []
 
-# The dealer draws two cards and prints the first one.
-def dealer_draw():
-	global dealer_card_1
-	global dealer_card_2
-	global dealer_total
-	dealer_card_1 = deck.pop()
-	dealer_card_2 = deck.pop()
-	dealer_total = card_value[dealer_card_1] + card_value[dealer_card_2]
+	def reset_deck(self):
+		self.current_deck = self.ordered_deck.copy()
 
-	print(f"The dealer has {dealer_card_1}")
-	hit_or_stand()	
+	def shuffle(self):
+		random.shuffle(self.current_deck)
 
-# Lets user either hit, and receive another card, or stand.
+	def draw_card(self):
+		return self.current_deck.pop()
+
+class Hand():
+	def __init__(self, deck):
+		self.hand = []
+		self.hand_values = []
+		self.total = 0
+
+	def deal(self):
+		self.hand.append(deck.draw_card())
+		self.hand_values.append(deck.card_value[self.hand[-1]])	
+		self.total = sum(self.hand_values)
+
+	def reset_hand(self):
+		self.hand = []
+		self.hand_values = []
+		self.total = 0	
+
+def game_start():
+	deck.reset_deck()
+	deck.shuffle()
+	player.reset_hand()
+	dealer.reset_hand()
+	player.deal()
+	player.deal()
+	dealer.deal()
+	dealer.deal()
+	
+	for card in player.hand:
+		if card == "Ace" or card == "8":
+			print("You drew an " + card + ".")
+		else:
+			print("You drew a " + card + ".")
+	print("Your total is " + str(player.total) + ".")
+
+	if dealer.hand[0] == "Ace" or dealer.hand[0] == "8":
+		print("\nThe dealer drew an " + dealer.hand[0] + ".")
+	else: 
+		print("\nThe dealer drew a " + dealer.hand[0] + ".")		
+
+	hit_or_stand()
+	
 def hit_or_stand():
-	print("Would you like to hit or stand?")
+	print("Would you like to hit (h) or stand (s)?")
 	choice = input("> ")
 
-	if choice == "hit":
-		card_3 = deck.pop()
-		global total
-		total = total + card_value[card_3]
-		print(f"Your new card is {card_3}")
-		if total > 21:
-			print(f"Your total is {total}.\nYou busted")
-			end()
-		else:
-			print(f"Your total is {total}")
-			hit_or_stand()
-	elif choice == "stand":
-		dealer_cards()			
-	else:
-		print("You have to type hit or stand.")
-		hit_or_stand()			
-
-# Prints the dealers cards
-def dealer_cards():
-	global dealer_card_1
-	global dealer_card_2
-
-	print(f"The dealer's cards are {dealer_card_1} and {dealer_card_2}")
-	dealer_choice()
-
-#The dealer draws cards until he has at least 17
-def dealer_choice():
-	global dealer_total
-	
-	if dealer_total < 17:
-		dealer_card_3 = deck.pop()
-		print(f"The dealer drew {dealer_card_3}")
-		dealer_total = dealer_total + card_value[dealer_card_3]
+	if choice == "hit" or choice == "h":
+		hit()
+	elif choice == "stand" or choice == "s":
 		dealer_choice()
 	else:
-		winner()
+		hit_or_stand()
 
-# Determines who the winner is
-def winner():
-	global dealer_total
-	global total
+def hit():
+	player.deal()
 
-	if dealer_total > 21:
-		print(f"The dealer's total is {dealer_total}\nThe dealer busted.\nYou win!")
-		end()
-	elif dealer_total > total:
-		print(f"The dealer's total is {dealer_total}\nYour total is {total}\nThe dealer wins.")
-		end()
+	if player.hand[-1] == "Ace" or player.hand == "8":
+		print("\nYou drew an " + player.hand[-1] + ".\nYour total is " + str(player.total) + ".")
 	else:
-		print(f"The dealer's total is {dealer_total}\nYour total is {total}\nYou win!")	
-		end()		
+		print("\nYou drew a " + player.hand[-1] + ".\nYour total is " + str(player.total) + ".")
 
-# Let's the user quit or start a new game.
-def end():
-	choice = input("Would you like to quit or play a new game?\n> ")
-
-	if choice == "quit" or choice == "q":
-		print("Goodbye.")
-		exit(0)
-	elif choice == "new game" or choice == "play again":
-		deck = ["2", "3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace",
-		"2", "3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace", "2", 
-		"3", "4", "5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace", "2", "3", "4",
-		"5", "6", "7","8", "9", "10", "Jack", "Queen", "King", "Ace"]
-
-		deal()
+	if player.total > 21:
+		print("You busted.")
+		game_over()
 	else:
-		print("Please type quit or new game.")
-		end()	
+		hit_or_stand()			
 
-deal()
+def dealer_choice():
+	if dealer.total <= 17:
+		dealer.deal()
+
+		if dealer.hand[-1] == "Ace" or dealer.hand[-1] == "8":
+			print("The dealer drew an " + dealer.hand[-1] + ".")
+		else:
+			print("The dealer drew a " + dealer.hand[-1] + ".")
+
+		dealer_choice()
+
+	else:
+		choose_winner()											
+
+def choose_winner():
+	print("The dealer's total is " + str(dealer.total) + ".")
+	if dealer.total > 21:
+		print("The dealer busted.\nYou win.")
+	elif dealer.total == player.total:
+		print("It's a tie.")
+	elif dealer.total > player.total:
+		print("The dealer wins.")
+	else:
+		print("You win.")
+
+	game_over()				
+
+def game_over():
+	print("Would you like to play again (p) or quit (q)?")
+	choice = input("> ")
+
+	if choice == "play again" or choice == "p":
+		game_start()
+	elif choice == "quit" or choice == "q":
+		print("Thank you for playing.")
+		exit(0)	
+
+deck = Deck()
+player = Hand(deck)
+dealer = Hand(deck)
+
+game_start()	
+			
