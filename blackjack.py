@@ -1,4 +1,5 @@
 import random
+import os
 
 class Deck():
 
@@ -49,6 +50,7 @@ class Hand():
 		self.total = 0	
 
 def game_start():
+	os.system('clear')
 	deck.reset_deck()
 	deck.shuffle()
 	player.reset_hand()
@@ -86,14 +88,13 @@ def hit_or_stand():
 def hit():
 	player.deal()
 
-	if player.hand[-1] == "Ace" or player.hand == "8":
+	if player.hand[-1] == "Ace" or player.hand[-1] == "8":
 		print("\nYou drew an " + player.hand[-1] + ".\nYour total is " + str(player.total) + ".")
 	else:
 		print("\nYou drew a " + player.hand[-1] + ".\nYour total is " + str(player.total) + ".")
 
 	if player.total > 21:
-		print("You busted.")
-		game_over()
+		choose_winner()
 	else:
 		hit_or_stand()			
 
@@ -107,12 +108,15 @@ def dealer_choice():
 			if card == "Ace" or card == "8":
 				print("The dealer drew an " + card + ".")
 			else:
-				print("The dealer drew a " + card + ".")	
+				print("The dealer drew a " + card + ".")
+
+		print("The dealer's total is " + str(dealer.total) + ".")			
 		choose_winner()											
 
 def choose_winner():
-	print("The dealer's total is " + str(dealer.total) + ".")
-	if dealer.total > 21:
+	if player.total > 21:
+		print("You busted.\nThe dealer wins.")
+	elif dealer.total > 21:
 		print("The dealer busted.\nYou win.")
 	elif dealer.total == player.total:
 		print("It's a tie.")
