@@ -26,16 +26,26 @@ class Hand():
 	def __init__(self, deck):
 		self.hand = []
 		self.hand_values = []
+		self.aces = 0
 		self.total = 0
 
 	def deal(self):
 		self.hand.append(deck.draw_card())
-		self.hand_values.append(deck.card_value[self.hand[-1]])	
-		self.total = sum(self.hand_values)
+		self.hand_values.append(deck.card_value[self.hand[-1]])
+
+		if self.hand[-1] == "Ace":
+			self.aces += 1
+
+		self.total += self.hand_values[-1]
+
+		while self.total > 21 and self.aces > 0:
+			self.total -= 10
+			self.aces -= 1
 
 	def reset_hand(self):
 		self.hand = []
 		self.hand_values = []
+		self.aces = 0
 		self.total = 0	
 
 def game_start():
@@ -88,6 +98,11 @@ def hit():
 		hit_or_stand()			
 
 def dealer_choice():
+	if dealer.hand[-1] == "Ace" or dealer_hand[-1] == "8":
+		print("The dealer drew an " + dealer_hand[-1] ".")
+	else:
+		print("The dealer drew a " + dealer_hand[-1])
+			
 	if dealer.total <= 17:
 		dealer.deal()
 
@@ -128,5 +143,7 @@ deck = Deck()
 player = Hand(deck)
 dealer = Hand(deck)
 
-game_start()	
+game_start()
+
+
 			
