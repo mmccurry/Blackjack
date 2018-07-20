@@ -98,22 +98,16 @@ def hit():
 		hit_or_stand()			
 
 def dealer_choice():
-	if dealer.hand[-1] == "Ace" or dealer_hand[-1] == "8":
-		print("The dealer drew an " + dealer_hand[-1] ".")
-	else:
-		print("The dealer drew a " + dealer_hand[-1])
-			
-	if dealer.total <= 17:
+	if dealer.total < 17:
 		dealer.deal()
-
-		if dealer.hand[-1] == "Ace" or dealer.hand[-1] == "8":
-			print("The dealer drew an " + dealer.hand[-1] + ".")
-		else:
-			print("The dealer drew a " + dealer.hand[-1] + ".")
-
 		dealer_choice()
 
 	else:
+		for card in dealer.hand[1:]:
+			if card == "Ace" or card == "8":
+				print("The dealer drew an " + card + ".")
+			else:
+				print("The dealer drew a " + card + ".")	
 		choose_winner()											
 
 def choose_winner():
@@ -146,4 +140,3 @@ dealer = Hand(deck)
 game_start()
 
 
-			
