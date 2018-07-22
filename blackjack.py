@@ -49,6 +49,37 @@ class Hand():
 		self.aces = 0
 		self.total = 0	
 
+def print_screen():
+	os.system('clear')
+
+	print("""
+----------------------------------------
+	     Blackjack
+----------------------------------------
+
+  ---------              ---------
+  |J      |              |A      |
+  |   _   |              |   ^   |
+  |  ( )  |              |  / \\  |
+  | (_'_) |              |  \\ /  |
+  |   |   |              |   v   |
+  |      J|              |      A| 
+  ---------              ---------         
+
+----------------------------------------""")                  
+	print("Your Cards: " + ", ".join(player.hand) ,)
+	print(
+"""----------------------------------------""")
+	print("Your total: " + str(player.total))
+	print(
+"""----------------------------------------""")
+	print("Dealer's cards: " + ", ".join(dealer.hand))  
+	print(
+"""----------------------------------------""")        
+	print("Dealer's Total: " + str(dealer.total))
+	print(
+"""----------------------------------------""")		
+
 def game_start():
 	os.system('clear')
 	deck.reset_deck()
@@ -58,23 +89,10 @@ def game_start():
 	player.deal()
 	player.deal()
 	dealer.deal()
-	dealer.deal()
-	
-	for card in player.hand:
-		if card == "Ace" or card == "8":
-			print("You drew an " + card + ".")
-		else:
-			print("You drew a " + card + ".")
-	print("Your total is " + str(player.total) + ".")
-
-	if dealer.hand[0] == "Ace" or dealer.hand[0] == "8":
-		print("\nThe dealer drew an " + dealer.hand[0] + ".")
-	else: 
-		print("\nThe dealer drew a " + dealer.hand[0] + ".")		
-
 	hit_or_stand()
 	
 def hit_or_stand():
+	print_screen()
 	print("Would you like to hit (h) or stand (s)?")
 	choice = input("> ")
 
@@ -88,32 +106,21 @@ def hit_or_stand():
 def hit():
 	player.deal()
 
-	if player.hand[-1] == "Ace" or player.hand[-1] == "8":
-		print("\nYou drew an " + player.hand[-1] + ".\nYour total is " + str(player.total) + ".")
-	else:
-		print("\nYou drew a " + player.hand[-1] + ".\nYour total is " + str(player.total) + ".")
-
 	if player.total > 21:
 		choose_winner()
 	else:
 		hit_or_stand()			
 
 def dealer_choice():
-	if dealer.total < 17:
+	dealer.deal()
+
+	while dealer.total < 17:
 		dealer.deal()
-		dealer_choice()
-
-	else:
-		for card in dealer.hand[1:]:
-			if card == "Ace" or card == "8":
-				print("The dealer drew an " + card + ".")
-			else:
-				print("The dealer drew a " + card + ".")
-
-		print("The dealer's total is " + str(dealer.total) + ".")			
-		choose_winner()											
+				
+	choose_winner()											
 
 def choose_winner():
+	print_screen()
 	if player.total > 21:
 		print("You busted.\nThe dealer wins.")
 	elif dealer.total > 21:
