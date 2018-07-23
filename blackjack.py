@@ -148,10 +148,7 @@ def game_over():
 		if sys.platform == 'win32':
 			os.system('cls')
 		else:
-			if sys.platform == 'win32':
-				os.system('cls')
-			else:
-				os.system('clear')	
+			os.system('clear')	
 		exit(0)	
 
 deck = Deck()
