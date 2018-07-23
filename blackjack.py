@@ -1,5 +1,6 @@
 import random
 import os
+import sys
 
 class Deck():
 
@@ -50,7 +51,11 @@ class Hand():
 		self.total = 0	
 
 def print_screen():
-	os.system('clear')
+	
+	if sys.platform == 'win32':
+		os.system('cls')
+	else:	
+		os.system('clear')
 
 	print("""
 ----------------------------------------
@@ -142,8 +147,10 @@ def game_over():
 	if choice == "play again" or choice == "p":
 		game_start()
 	elif choice == "quit" or choice == "q":
-		os.system('cls')
-		os.system('clear')
+		if sys.platform == 'win32':
+			os.system('cls')
+		else:
+			os.system('clear')
 		exit(0)	
 
 deck = Deck()
@@ -151,5 +158,6 @@ player = Hand(deck)
 dealer = Hand(deck)
 
 game_start()
+
 
 
