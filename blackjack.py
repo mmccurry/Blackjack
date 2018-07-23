@@ -141,7 +141,7 @@ def game_over():
 	if choice == "play again" or choice == "p":
 		game_start()
 	elif choice == "quit" or choice == "q":
-		print("Thank you for playing.")
+		os.system('clear')
 		exit(0)	
 
 deck = Deck()
