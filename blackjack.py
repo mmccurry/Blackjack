@@ -86,8 +86,6 @@ def print_screen():
 """----------------------------------------""")		
 
 def game_start():
-	os.system('cls')
-	os.system('clear')
 	deck.reset_deck()
 	deck.shuffle()
 	player.reset_hand()
