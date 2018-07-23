@@ -81,6 +81,7 @@ def print_screen():
 """----------------------------------------""")		
 
 def game_start():
+	os.system('cls')
 	os.system('clear')
 	deck.reset_deck()
 	deck.shuffle()
@@ -141,6 +142,7 @@ def game_over():
 	if choice == "play again" or choice == "p":
 		game_start()
 	elif choice == "quit" or choice == "q":
+		os.system('cls')
 		os.system('clear')
 		exit(0)	
 
