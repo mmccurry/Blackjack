@@ -30,6 +30,8 @@ class Hand():
 		self.hand_values = []
 		self.aces = 0
 		self.total = 0
+		self.money = 0
+		self.bet = 0
 
 	def deal(self):
 		self.hand.append(deck.draw_card())
@@ -49,6 +51,8 @@ class Hand():
 		self.hand_values = []
 		self.aces = 0
 		self.total = 0	
+		self.bet = 0
+
 
 def print_screen():
 	
@@ -58,9 +62,9 @@ def print_screen():
 		os.system('clear')
 
 	print("""
-----------------------------------------
-	     Blackjack
-----------------------------------------
+----------------------------------------""")
+	print("           Blackjack         Money: " + str(player.money)) 
+	print("""----------------------------------------
 
   ---------              ---------
   |J      |              |A      |
@@ -85,16 +89,35 @@ def print_screen():
 	print(
 """----------------------------------------""")		
 
-def game_start():
+def game_reset():
 	deck.reset_deck()
 	deck.shuffle()
 	player.reset_hand()
 	dealer.reset_hand()
+	print_screen()
+	bet()
+
+def bet():
+	print("How much do you want to bet?")
+	choice = input("> ")
+
+	if player.money - int(choice) < 0:
+		print("You don't have enough money")
+		bet()
+	elif int(choice) < 5:
+		print("The minimum bet is 5.")
+		bet()
+	else:		
+		player.money -= int(choice)
+		player.bet = int(choice)
+		deal()
+	
+def deal():
 	player.deal()
 	player.deal()
 	dealer.deal()
 	hit_or_stand()
-	
+
 def hit_or_stand():
 	print_screen()
 	print("Would you like to hit (h) or stand (s)?")
@@ -128,12 +151,18 @@ def choose_winner():
 	if player.total > 21:
 		print("You busted.\nThe dealer wins.")
 	elif dealer.total > 21:
+		player.money += player.bet * 2
+		print_screen()
 		print("The dealer busted.\nYou win.")
 	elif dealer.total == player.total:
+		player.money += player.bet
+		print_screen()
 		print("It's a tie.")
 	elif dealer.total > player.total:
 		print("The dealer wins.")
 	else:
+		player.money += player.bet * 2
+		print_screen()
 		print("You win.")
 
 	game_over()				
@@ -143,7 +172,7 @@ def game_over():
 	choice = input("> ")
 
 	if choice == "play again" or choice == "p":
-		game_start()
+		game_reset()
 	elif choice == "quit" or choice == "q":
 		if sys.platform == 'win32':
 			os.system('cls')
@@ -155,7 +184,9 @@ deck = Deck()
 player = Hand(deck)
 dealer = Hand(deck)
 
-game_start()
+player.money = 100
+
+game_reset()
 
 
 
