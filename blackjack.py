@@ -89,11 +89,21 @@ def print_screen():
 	print(
 """----------------------------------------""")		
 
+def load_save():
+	save_file = open('blackjack_save.txt', 'r')
+	save = save_file.read()
+	save_file.close()
+	if save == "":
+		player.money = 100
+	else:
+		player.money = int(save)		
+
 def game_reset():
 	deck.reset_deck()
 	deck.shuffle()
 	player.reset_hand()
 	dealer.reset_hand()
+	load_save()
 	print_screen()
 	bet()
 
@@ -168,6 +178,9 @@ def choose_winner():
 	game_over()				
 
 def game_over():
+	save_file = open('blackjack_save.txt', 'w')
+	save_file.write(str(player.money))
+	save_file.close()
 	print("Would you like to play again (p) or quit (q)?")
 	choice = input("> ")
 
@@ -178,13 +191,11 @@ def game_over():
 			os.system('cls')
 		else:
 			os.system('clear')	
-		exit(0)	
+		exit(0)
 
 deck = Deck()
 player = Hand(deck)
 dealer = Hand(deck)
-
-player.money = 100
 
 game_reset()
 
