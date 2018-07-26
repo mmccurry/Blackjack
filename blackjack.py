@@ -1,6 +1,7 @@
 import random
 import os
 import sys
+import json
 
 class Deck():
 
@@ -32,6 +33,7 @@ class Hand():
 		self.total = 0
 		self.money = 0
 		self.bet = 0
+		self.name = ""
 
 	def deal(self):
 		self.hand.append(deck.draw_card())
@@ -53,13 +55,14 @@ class Hand():
 		self.total = 0	
 		self.bet = 0
 
-
-def print_screen():
-	
+def clear_screen():
 	if sys.platform == 'win32':
 		os.system('cls')
 	else:	
 		os.system('clear')
+
+def print_screen():
+	clear_screen()
 
 	print("""
 ----------------------------------------""")
@@ -89,25 +92,49 @@ def print_screen():
 	print(
 """----------------------------------------""")		
 
-def load_save():
-	save_file = open('blackjack_save.txt', 'r')
-	save = save_file.read()
-	save_file.close()
-	if save == "":
-		player.money = 100
-	else:
-		player.money = int(save)		
+def load_game():
+	clear_screen()
+
+	with open('blackjack_save.json', 'r') as save:
+		save_games = json.load(save)
+
+	print("Would you like to start a new game (n) or continue a previous game (c)?")
+	choice = input("> ")
+
+	if choice == "n" or choice == "new game":
+		while player.name == "":
+			print("Please enter your name.")
+			name = input("> ")
+
+			if name.lower() in save_games:
+				print("That name is already taken.")
+			else:
+				player.name = name.lower()
+				player.money = 100	
+
+	elif choice == "c" or choice == "continue":
+		while player.name == "":
+			print("Please enter your name.")
+			name = input("> ")
+			
+			if name.lower() in save_games:
+				player.name = name.lower()
+				player.money = save_games[name.lower()]
+			else:
+				print("No save data exists for " + name)
+			
+	game_reset()	
 
 def game_reset():
 	deck.reset_deck()
 	deck.shuffle()
 	player.reset_hand()
 	dealer.reset_hand()
-	load_save()
-	print_screen()
 	bet()
+	
 
 def bet():
+	print_screen()
 	print("How much do you want to bet?")
 	choice = input("> ")
 
@@ -178,26 +205,29 @@ def choose_winner():
 	game_over()				
 
 def game_over():
-	save_file = open('blackjack_save.txt', 'w')
-	save_file.write(str(player.money))
-	save_file.close()
 	print("Would you like to play again (p) or quit (q)?")
 	choice = input("> ")
 
 	if choice == "play again" or choice == "p":
 		game_reset()
 	elif choice == "quit" or choice == "q":
-		if sys.platform == 'win32':
-			os.system('cls')
-		else:
-			os.system('clear')	
+		save_game()
+		clear_screen()
 		exit(0)
+
+def save_game():
+	with open('blackjack_save.json', 'r') as save:
+		save_games = json.load(save)
+		save_games.update({player.name: player.money})
+	with open('blackjack_save.json', 'w') as save:
+		json.dump(save_games, save)	
+
 
 deck = Deck()
 player = Hand(deck)
 dealer = Hand(deck)
 
-game_reset()
+load_game()
 
 
 
