@@ -130,24 +130,28 @@ def game_reset():
 	deck.shuffle()
 	player.reset_hand()
 	dealer.reset_hand()
+	print_screen()
 	bet()
 	
 
 def bet():
-	print_screen()
 	print("How much do you want to bet?")
 	choice = input("> ")
 
-	if player.money - int(choice) < 0:
-		print("You don't have enough money")
-		bet()
-	elif int(choice) < 5:
-		print("The minimum bet is 5.")
-		bet()
-	else:		
-		player.money -= int(choice)
-		player.bet = int(choice)
-		deal()
+	try:
+		if player.money - int(choice) < 0:
+			print("You don't have enough money")
+			bet()
+		elif int(choice) < 5:
+			print("The minimum bet is 5.")
+			bet()
+		else:		
+			player.money -= int(choice)
+			player.bet = int(choice)
+			deal()
+	except ValueError:
+		print("You have to enter a number.")
+		bet()		
 	
 def deal():
 	player.deal()
@@ -213,7 +217,7 @@ def game_over():
 	elif choice == "quit" or choice == "q":
 		save_game()
 		clear_screen()
-		exit(0)
+		sys.exit()
 
 def save_game():
 	with open('blackjack_save.json', 'r') as save:
