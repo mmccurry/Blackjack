@@ -138,7 +138,7 @@ def bet():
 	print("How much do you want to bet?")
 	choice = input("> ")
 
-	try:
+	if choice.isdigit():
 		if player.money - int(choice) < 0:
 			print("You don't have enough money")
 			bet()
@@ -149,7 +149,7 @@ def bet():
 			player.money -= int(choice)
 			player.bet = int(choice)
 			deal()
-	except ValueError:
+	else:
 		print("You have to enter a number.")
 		bet()		
 	
