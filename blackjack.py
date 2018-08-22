@@ -92,16 +92,23 @@ def print_screen():
 	print(
 """----------------------------------------""")		
 
+def create_file():
+	if os.path.isfile('blackjack_save.json') == False:
+		save_games = open('blackjack_save.json', 'w')
+		save_games.write('{}')
+		save_games.close()	
+
 def load_game():
+	create_file()
 	clear_screen()
 
 	with open('blackjack_save.json', 'r') as save:
 		save_games = json.load(save)
 
-	print("Would you like to start a new game (n) or continue a previous game (c)?")
+	print("To start a new game press (n).\nTo continue a previous game press (c).\nTo see a list of current saves press (s)")
 	choice = input("> ")
 
-	if choice == "n" or choice == "new game":
+	if choice == "n":
 		while player.name == "":
 			print("Please enter your name.")
 			name = input("> ")
@@ -111,8 +118,9 @@ def load_game():
 			else:
 				player.name = name.lower()
 				player.money = 100	
+				game_reset()
 
-	elif choice == "c" or choice == "continue":
+	elif choice == "c":
 		while player.name == "":
 			print("Please enter your name.")
 			name = input("> ")
@@ -120,10 +128,21 @@ def load_game():
 			if name.lower() in save_games:
 				player.name = name.lower()
 				player.money = save_games[name.lower()]
+				game_reset()
 			else:
 				print("No save data exists for " + name)
-			
-	game_reset()	
+
+	elif choice == "s":
+		clear_screen()
+		print_saves()
+		print("\nPress enter to return to the last screen.")
+		input()
+		load_game()		
+	
+
+
+	else:
+		load_game()
 
 def game_reset():
 	deck.reset_deck()
@@ -135,7 +154,7 @@ def game_reset():
 	
 
 def bet():
-	print("How much do you want to bet?")
+	print("How much do you want to bet?\nThe minimum bet is 5.")
 	choice = input("> ")
 
 	if choice.isdigit():
@@ -151,7 +170,7 @@ def bet():
 			deal()
 	else:
 		print("You have to enter a number.")
-		bet()		
+		bet()
 	
 def deal():
 	player.deal()
@@ -185,7 +204,7 @@ def dealer_choice():
 	while dealer.total < 17:
 		dealer.deal()
 				
-	choose_winner()											
+	choose_winner()
 
 def choose_winner():
 	print_screen()
@@ -206,25 +225,65 @@ def choose_winner():
 		print_screen()
 		print("You win.")
 
-	game_over()				
+	if player.money < 5:
+		low_money()
+	else:
+		game_over()
+
+def low_money():
+	print("Sorry, you don't have enough money to continue.\nWould you like to start a new game (n) or quit (q)")
+	choice = input("> ")
+	if choice == "n" or choice == "new game":
+		delete_save()
+		player.name = ""
+		load_game()
+	elif choice == "q" or choice == "quit":
+		delete_save()
+		clear_screen()
+		sys.exit()
+	else:
+		print("I don't understand.")
+		low_money()									
 
 def game_over():
-	print("Would you like to play again (p) or quit (q)?")
-	choice = input("> ")
-
+	choice = input("Would you like to play again (p) or quit (q)?\n> ")
 	if choice == "play again" or choice == "p":
 		game_reset()
 	elif choice == "quit" or choice == "q":
 		save_game()
 		clear_screen()
 		sys.exit()
+	else:
+		print("I don't understand.")
+		game_over()	
 
 def save_game():
 	with open('blackjack_save.json', 'r') as save:
 		save_games = json.load(save)
 		save_games.update({player.name: player.money})
-	with open('blackjack_save.json', 'w') as save:
+		
+	with open('blackjack_save.json', 'w') as save:	
 		json.dump(save_games, save)	
+		
+def delete_save():
+	with open('blackjack_save.json', 'r') as save:
+		save_games = json.load(save)
+
+		if player.name in save_games:
+			del save_games[player.name]
+
+	with open('blackjack_save.json', 'w') as save:		
+		json.dump(save_games, save)		
+
+def print_saves():
+	with open('blackjack_save.json', 'r') as save:
+		save_games = json.load(save)
+		for save in save_games:
+			print(save + ": " + str(save_games[save]))
+
+	print("\nPress enter to return to the last screen.")
+	input()
+	load_game()			
 
 
 deck = Deck()
@@ -232,6 +291,4 @@ player = Hand(deck)
 dealer = Hand(deck)
 
 load_game()
-
-
 
